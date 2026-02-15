@@ -1,0 +1,18 @@
+.order_id {
+  text-shadow: 0 0 16px #33f;
+}
+
+.icon_wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100px;
+  height: 100px;
+  background-color: rgb(51 51 255 / 20%);
+  border-radius: 50%;
+}
+
+.check_icon {
+  width: 40px;
+  height: 40px;
+}

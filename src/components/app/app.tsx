@@ -1,7 +1,6 @@
 import { AppHeader } from '@components/app-header/app-header';
-import { BurgerConstructor } from '@components/burger-constructor/burger-constructor';
-import { BurgerIngredients } from '@components/burger-ingredients/burger-ingredients';
-import { ingredients } from '@utils/ingredients';
+
+import { ConstructorController } from '../constructor-controller/constructor-controller';
 
 import styles from './app.module.css';
 
@@ -13,8 +12,7 @@ export const App = (): React.JSX.Element => {
         Соберите бургер
       </h1>
       <main className={`${styles.main} pl-5 pr-5`}>
-        <BurgerIngredients ingredients={ingredients} />
-        <BurgerConstructor ingredients={ingredients} />
+        <ConstructorController />
       </main>
     </div>
   );

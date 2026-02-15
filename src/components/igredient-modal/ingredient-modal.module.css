@@ -1,0 +1,15 @@
+.title {
+  align-self: flex-start;
+}
+
+.info {
+  display: flex;
+  gap: 20px;
+}
+
+.info_item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
