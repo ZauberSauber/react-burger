@@ -1,0 +1,11 @@
+.ingredient {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.price {
+  display: flex;
+  gap: 10px;
+}
