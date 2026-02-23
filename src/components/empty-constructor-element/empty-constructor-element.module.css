@@ -1,0 +1,19 @@
+.emptyElement {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: stretch;
+  height: 80px;
+  background-color: rgb(47 47 55);
+  border-radius: 40px;
+}
+
+.emptyElement_top {
+  border-top-left-radius: 88px;
+  border-top-right-radius: 88px;
+}
+
+.emptyElement_bottom {
+  border-bottom-right-radius: 88px;
+  border-bottom-left-radius: 88px;
+}

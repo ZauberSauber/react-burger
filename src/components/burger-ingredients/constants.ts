@@ -1,7 +1,7 @@
 import type { TIngredientType } from '@/utils/types';
 
-export const TAB_NAMES: Record<TIngredientType, TIngredientType> = {
-  bun: 'bun',
-  main: 'main',
-  sauce: 'sauce',
-};
+export const TABS: { id: TIngredientType; name: string }[] = [
+  { id: 'bun', name: 'Булки' },
+  { id: 'main', name: 'Соусы' },
+  { id: 'sauce', name: 'Начинки' },
+];

@@ -8,19 +8,14 @@ import styles from './ingredient.module.css';
 type TIngredientProps = {
   ingredient: TIngredient;
   count?: number;
-  onClick: (id: string) => void;
 };
 
 export const Ingredient = ({
   ingredient,
   count = 0,
-  onClick,
 }: TIngredientProps): React.JSX.Element => {
   return (
-    <div
-      className={clsx('pt-2 pb-2', styles.ingredient)}
-      onClick={() => onClick(ingredient._id)}
-    >
+    <div className={clsx('pt-2 pb-2', styles.ingredient)}>
       {count > 0 && <Counter count={count} size="default" />}
 
       <img src={ingredient.image} alt={ingredient.name} />

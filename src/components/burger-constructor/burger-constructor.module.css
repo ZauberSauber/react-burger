@@ -1,7 +1,7 @@
 .burger_constructor {
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
+  align-items: flex-end;
   gap: 16px;
   width: 600px;
   padding-bottom: 20px;
@@ -9,6 +9,10 @@
 }
 
 .burger_scroll {
+  width: 100%;
+}
+
+.drop_ingedient {
   display: flex;
   flex-direction: column;
   gap: 16px;
@@ -25,7 +29,13 @@
 }
 
 .ingredient__bun {
+  width: 100%;
+  max-width: 536px;
   margin-left: 28px;
+}
+
+.empty_ingredient {
+  max-width: 536px;
 }
 
 .drag_icon {
