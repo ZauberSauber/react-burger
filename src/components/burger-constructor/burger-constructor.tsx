@@ -1,5 +1,12 @@
 import { useCreateOrderMutation } from '@/services/constructor/api';
-import { closestCenter, DndContext, type DragEndEvent } from '@dnd-kit/core';
+import {
+  closestCenter,
+  DndContext,
+  MouseSensor,
+  useSensor,
+  useSensors,
+  type DragEndEvent,
+} from '@dnd-kit/core';
 import { restrictToVerticalAxis } from '@dnd-kit/modifiers';
 import {
   arrayMove,
@@ -22,12 +29,12 @@ import { ScrollWrapper } from '../scroll-wrapper/scroll-wrapper';
 import {
   addBun,
   addInner,
+  clearRecept,
   getRecept,
   removeIngredient,
   setInnerList,
-  setLastIngredient,
 } from '../slices/burger/burgerSlice';
-import { setIngredientModalState, setOrderModalState } from '../slices/modal/modalSlice';
+import { setOrderModalState } from '../slices/modal/modalSlice';
 
 import type { TIngredient } from '@utils/types';
 
@@ -41,15 +48,20 @@ export const BurgerConstructor = (): React.JSX.Element => {
 
   const recept = useSelector(getRecept);
 
+  const sensors = useSensors(
+    useSensor(MouseSensor, {
+      activationConstraint: {
+        distance: 8,
+      },
+    })
+  );
+
   const handleDropIngredient = (item: TIngredient): void => {
     if (item.type === 'bun') {
       dispatch(addBun(item));
     } else {
       dispatch(addInner(item));
     }
-
-    dispatch(setLastIngredient(item));
-    dispatch(setIngredientModalState(true));
   };
 
   const deleteIngredient = (index: number): void => {
@@ -67,6 +79,7 @@ export const BurgerConstructor = (): React.JSX.Element => {
       .unwrap()
       .then(() => {
         dispatch(setOrderModalState(true));
+        dispatch(clearRecept());
       })
       .catch((error) => {
         console.log(error);
@@ -118,6 +131,7 @@ export const BurgerConstructor = (): React.JSX.Element => {
         >
           {recept.inner.length > 0 ? (
             <DndContext
+              sensors={sensors}
               collisionDetection={closestCenter}
               modifiers={[restrictToVerticalAxis]}
               onDragEnd={handleDragEnd}

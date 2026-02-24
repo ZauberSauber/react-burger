@@ -5,9 +5,9 @@ import { useDispatch, useSelector } from 'react-redux';
 import { BurgerConstructor } from '@components/burger-constructor/burger-constructor';
 import { BurgerIngredients } from '@components/burger-ingredients/burger-ingredients';
 
-import { IngredientModal } from '../igredient-modal/ingredient-modal';
+import { IngredientDetails } from '../igredient-details/ingredient-details';
 import { Modal } from '../modal/modal';
-import { OrderModal } from '../order-modal/order-modal';
+import { OrderDetails } from '../order-details/order-details';
 import {
   getIngredientModalState,
   getOrderModalState,
@@ -38,12 +38,12 @@ export const ConstructorController = (): React.JSX.Element => {
 
       {ingredientModal.isOpen && (
         <Modal onClose={handleCloseIgredientModal}>
-          <IngredientModal />
+          <IngredientDetails />
         </Modal>
       )}
       {orderModal.isOpen && (
         <Modal onClose={handleCloseOrderModal}>
-          <OrderModal />
+          <OrderDetails />
         </Modal>
       )}
     </>

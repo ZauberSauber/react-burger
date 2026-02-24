@@ -3,9 +3,9 @@ import { useSelector } from 'react-redux';
 
 import { getLastIngredient } from '../slices/burger/burgerSlice';
 
-import styles from './ingredient-modal.module.css';
+import styles from './ingredient-details.module.css';
 
-export const IngredientModal = (): React.JSX.Element => {
+export const IngredientDetails = (): React.JSX.Element => {
   const ingredient = useSelector(getLastIngredient);
 
   return ingredient ? (

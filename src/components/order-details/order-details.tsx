@@ -2,9 +2,9 @@ import { useCreateOrderMutation } from '@/services/constructor/api';
 import { CheckMarkIcon } from '@krgaa/react-developer-burger-ui-components';
 import clsx from 'clsx';
 
-import styles from './order-modal.module.css';
+import styles from './order-details.module.css';
 
-export const OrderModal = (): React.JSX.Element => {
+export const OrderDetails = (): React.JSX.Element => {
   const [, { data }] = useCreateOrderMutation({
     fixedCacheKey: 'from-constructor',
   });

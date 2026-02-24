@@ -25,9 +25,21 @@ export const burgerSlice = createSlice({
     addBun: (state, action: PayloadAction<TIngredient>) => {
       state.recept.bun = action.payload;
     },
-    addInner: (state, action: PayloadAction<TIngredient>) => {
-      action.payload.id = nanoid();
-      state.recept.inner.unshift(action.payload);
+    addInner: {
+      reducer: (state, action: PayloadAction<TIngredient>) => {
+        action.payload.id = nanoid();
+        state.recept.inner.unshift(action.payload);
+      },
+      prepare: (ingredient: TIngredient) => {
+        const id = nanoid();
+
+        return {
+          payload: {
+            ...ingredient,
+            id,
+          },
+        };
+      },
     },
     setInnerList: (state, action: PayloadAction<TIngredient[]>) => {
       state.recept.inner = action.payload;
@@ -38,6 +50,12 @@ export const burgerSlice = createSlice({
     setLastIngredient: (state, action: PayloadAction<TIngredient | null>) => {
       state.lastIngredient = action.payload;
     },
+    clearRecept: (state) => {
+      state.recept = {
+        bun: null,
+        inner: [],
+      };
+    },
   },
   selectors: {
     getRecept: (state) => state.recept,
@@ -45,8 +63,14 @@ export const burgerSlice = createSlice({
   },
 });
 
-export const { addBun, addInner, removeIngredient, setInnerList, setLastIngredient } =
-  burgerSlice.actions;
+export const {
+  addBun,
+  addInner,
+  removeIngredient,
+  setInnerList,
+  setLastIngredient,
+  clearRecept,
+} = burgerSlice.actions;
 
 export const {
   selectors: { getRecept, getLastIngredient },

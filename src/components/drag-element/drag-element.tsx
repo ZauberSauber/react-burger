@@ -23,7 +23,10 @@ export const DragElement = ({
   });
 
   return !collected.isDragging ? (
-    <div {...collected} ref={drag as unknown as React.RefObject<HTMLDivElement>}>
+    <div
+      style={{ opacity: collected.isDragging ? 0.4 : 1 }}
+      ref={drag as unknown as React.RefObject<HTMLDivElement>}
+    >
       {children}
     </div>
   ) : (
