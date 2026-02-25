@@ -1,5 +1,9 @@
 import { Counter, CurrencyIcon } from '@krgaa/react-developer-burger-ui-components';
 import clsx from 'clsx';
+import { useDispatch } from 'react-redux';
+
+import { setLastIngredient } from '../slices/burger/burgerSlice';
+import { setIngredientModalState } from '../slices/modal/modalSlice';
 
 import type { TIngredient } from '@/utils/types';
 
@@ -8,18 +12,21 @@ import styles from './ingredient.module.css';
 type TIngredientProps = {
   ingredient: TIngredient;
   count?: number;
-  onClick: (id: string) => void;
 };
 
 export const Ingredient = ({
   ingredient,
   count = 0,
-  onClick,
 }: TIngredientProps): React.JSX.Element => {
+  const dispatch = useDispatch();
+
   return (
     <div
       className={clsx('pt-2 pb-2', styles.ingredient)}
-      onClick={() => onClick(ingredient._id)}
+      onClick={() => {
+        dispatch(setLastIngredient(ingredient));
+        dispatch(setIngredientModalState(true));
+      }}
     >
       {count > 0 && <Counter count={count} size="default" />}
 

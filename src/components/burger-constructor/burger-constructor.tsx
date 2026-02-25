@@ -1,3 +1,18 @@
+import { useCreateOrderMutation } from '@/services/constructor/api';
+import {
+  closestCenter,
+  DndContext,
+  MouseSensor,
+  useSensor,
+  useSensors,
+  type DragEndEvent,
+} from '@dnd-kit/core';
+import { restrictToVerticalAxis } from '@dnd-kit/modifiers';
+import {
+  arrayMove,
+  SortableContext,
+  verticalListSortingStrategy,
+} from '@dnd-kit/sortable';
 import {
   Button,
   ConstructorElement,
@@ -5,115 +20,198 @@ import {
   DragIcon,
 } from '@krgaa/react-developer-burger-ui-components';
 import clsx from 'clsx';
+import { useDispatch, useSelector } from 'react-redux';
 
+import { DragSortElement } from '../drag-sort-element/drag-sort-element';
+import { DropTarget } from '../drop-target/drop-target';
+import { EmptyConstructorElement } from '../empty-constructor-element/empty-constructor-element';
 import { ScrollWrapper } from '../scroll-wrapper/scroll-wrapper';
+import {
+  addBun,
+  addInner,
+  clearRecept,
+  getRecept,
+  removeIngredient,
+  setInnerList,
+} from '../slices/burger/burgerSlice';
+import { setOrderModalState } from '../slices/modal/modalSlice';
 
 import type { TIngredient } from '@utils/types';
 
 import styles from './burger-constructor.module.css';
 
-type TBurgerConstructorProps = {
-  ingredients: TIngredient[];
-  receptPrice: number;
-  deleteIngredient: (index: number) => void;
-  openOrderModal: () => void;
-};
-
-export const BurgerConstructor = ({
-  ingredients,
-  receptPrice,
-  deleteIngredient,
-  openOrderModal,
-}: TBurgerConstructorProps): React.JSX.Element => {
-  const burgerBuns: React.ReactNode[] = [];
-  const burgerInner: React.ReactNode[] = [];
-
-  ingredients.forEach((ingredient, index) => {
-    let type: 'bottom' | 'top' | undefined = undefined;
-    let isBun = false;
-    let bunPosition = '';
-
-    if (ingredient.type === 'bun') {
-      isBun = true;
-
-      if (index === 0) {
-        type = 'top';
-        bunPosition = ' (верх)';
-      } else {
-        type = 'bottom';
-        bunPosition = ' (низ)';
-      }
-
-      burgerBuns.push(
-        <div
-          className={clsx(
-            styles.ingredient_wrapper as string,
-            styles.ingredient__bun as string
-          )}
-          key={ingredient._id + index.toString()}
-        >
-          <ConstructorElement
-            extraClass={styles.ingredient as string}
-            price={ingredient.price}
-            text={ingredient.name + bunPosition}
-            thumbnail={ingredient.image}
-            type={type}
-            isLocked={isBun}
-          />
-        </div>
-      );
-    } else {
-      burgerInner.push(
-        <div
-          className={styles.ingredient_wrapper as string}
-          key={ingredient._id + index.toString()}
-        >
-          <DragIcon className={styles.drag_icon as string} type="primary" />
-
-          <ConstructorElement
-            extraClass={styles.ingredient as string}
-            handleClose={() => deleteIngredient(index)}
-            price={ingredient.price}
-            text={ingredient.name}
-            thumbnail={ingredient.image}
-          />
-        </div>
-      );
-    }
+export const BurgerConstructor = (): React.JSX.Element => {
+  const dispatch = useDispatch();
+  const [createOrderMutation, { isLoading: isCreatingOrder }] = useCreateOrderMutation({
+    fixedCacheKey: 'from-constructor',
   });
 
-  const burger: React.ReactNode[] = [
-    <ScrollWrapper key="burger-scroll" className={styles.burger_scroll as string}>
-      {burgerInner}
-    </ScrollWrapper>,
-  ];
+  const recept = useSelector(getRecept);
 
-  if (burgerBuns.length) {
-    burger.unshift(burgerBuns[0]);
-    burger.push(burgerBuns[1]);
-  }
+  const sensors = useSensors(
+    useSensor(MouseSensor, {
+      activationConstraint: {
+        distance: 8,
+      },
+    })
+  );
+
+  const handleDropIngredient = (item: TIngredient): void => {
+    if (item.type === 'bun') {
+      dispatch(addBun(item));
+    } else {
+      dispatch(addInner(item));
+    }
+  };
+
+  const deleteIngredient = (index: number): void => {
+    dispatch(removeIngredient(index));
+  };
+
+  const createOrder = async (): Promise<void> => {
+    let ids = recept.inner.map((item) => item._id);
+
+    if (recept.bun) {
+      ids = [recept.bun._id, ...ids, recept.bun._id];
+    }
+
+    await createOrderMutation({ ingredients: ids })
+      .unwrap()
+      .then(() => {
+        dispatch(setOrderModalState(true));
+        dispatch(clearRecept());
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+
+  const handleDragEnd = (event: DragEndEvent): void => {
+    const { active, over } = event;
+
+    if (over && active.id !== over.id) {
+      const oldIndex = recept.inner.findIndex((item) => item.id === active.id);
+      const newIndex = recept.inner.findIndex((item) => item.id === over.id);
+
+      const newList = arrayMove(recept.inner, oldIndex, newIndex);
+
+      dispatch(setInnerList(newList));
+    }
+  };
 
   return (
     <section className={styles.burger_constructor}>
-      {burger}
+      <DropTarget
+        className={clsx(
+          styles.ingredient_wrapper as string,
+          styles.ingredient__bun as string
+        )}
+        accept={'bun'}
+        onDrop={handleDropIngredient}
+      >
+        {recept.bun ? (
+          <ConstructorElement
+            extraClass={styles.ingredient as string}
+            price={recept.bun.price}
+            text={recept.bun.name + ' (верх)'}
+            thumbnail={recept.bun.image}
+            type={'top'}
+            isLocked
+          />
+        ) : (
+          <EmptyConstructorElement type={'top'} text={'Выберите булки'} />
+        )}
+      </DropTarget>
 
-      {receptPrice > 0 ? (
-        <div className={styles.price_block as string}>
-          <span className={clsx(styles.price as string, 'text text_type_main-large')}>
-            {receptPrice}
-            <CurrencyIcon className={styles.price_icon as string} type="primary" />
-          </span>
+      <ScrollWrapper className={styles.burger_scroll as string}>
+        <DropTarget
+          className={styles.drop_ingedient as string}
+          accept={['main', 'sauce']}
+          onDrop={handleDropIngredient}
+        >
+          {recept.inner.length > 0 ? (
+            <DndContext
+              sensors={sensors}
+              collisionDetection={closestCenter}
+              modifiers={[restrictToVerticalAxis]}
+              onDragEnd={handleDragEnd}
+            >
+              <SortableContext
+                items={recept.inner}
+                strategy={verticalListSortingStrategy}
+              >
+                {recept.inner.map((inner: TIngredient, index) => {
+                  return (
+                    <DragSortElement key={inner.id} data={inner}>
+                      <div className={styles.ingredient_wrapper as string}>
+                        <DragIcon
+                          className={styles.drag_icon as string}
+                          type="primary"
+                        />
 
-          <Button
-            size="medium"
-            type="primary"
-            htmlType="button"
-            onClick={openOrderModal}
-          >
-            Оформить заказ
-          </Button>
-        </div>
-      ) : null}
+                        <ConstructorElement
+                          extraClass={styles.ingredient as string}
+                          handleClose={() => deleteIngredient(index)}
+                          price={inner.price}
+                          text={inner.name}
+                          thumbnail={inner.image}
+                        />
+                      </div>
+                    </DragSortElement>
+                  );
+                })}
+              </SortableContext>
+            </DndContext>
+          ) : (
+            <div className={styles.ingredient_wrapper as string}>
+              <EmptyConstructorElement
+                className={styles.empty_ingredient as string}
+                text={'Выберите начинку'}
+              />
+            </div>
+          )}
+        </DropTarget>
+      </ScrollWrapper>
+
+      <DropTarget
+        className={clsx(
+          styles.ingredient_wrapper as string,
+          styles.ingredient__bun as string
+        )}
+        accept={'bun'}
+        onDrop={handleDropIngredient}
+      >
+        {recept.bun ? (
+          <ConstructorElement
+            extraClass={styles.ingredient as string}
+            price={recept.bun.price}
+            text={recept.bun.name + ' (низ)'}
+            thumbnail={recept.bun.image}
+            type={'bottom'}
+            isLocked
+          />
+        ) : (
+          <EmptyConstructorElement type={'bottom'} text={'Выберите булки'} />
+        )}
+      </DropTarget>
+
+      <div className={styles.price_block as string}>
+        <span className={clsx(styles.price as string, 'text text_type_main-large')}>
+          {recept.inner.reduce((acc: number, item: TIngredient) => acc + item.price, 0) +
+            (recept.bun?.price ?? 0) * 2}
+          <CurrencyIcon className={styles.price_icon as string} type="primary" />
+        </span>
+
+        <Button
+          size="medium"
+          type="primary"
+          htmlType="button"
+          disabled={!recept.bun || !recept.inner.length || isCreatingOrder}
+          onClick={() => void createOrder()}
+        >
+          Оформить заказ
+        </Button>
+      </div>
     </section>
   );
 };

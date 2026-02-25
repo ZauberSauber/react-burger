@@ -1,17 +1,14 @@
 import clsx from 'clsx';
+import { useSelector } from 'react-redux';
 
-import type { TIngredient } from '@/utils/types';
+import { getLastIngredient } from '../slices/burger/burgerSlice';
 
-import styles from './ingredient-modal.module.css';
+import styles from './ingredient-details.module.css';
 
-type TIngredientModalProps = {
-  ingredient: TIngredient;
-};
+export const IngredientDetails = (): React.JSX.Element => {
+  const ingredient = useSelector(getLastIngredient);
 
-export const IngredientModal = ({
-  ingredient,
-}: TIngredientModalProps): React.JSX.Element => {
-  return (
+  return ingredient ? (
     <>
       <h3 className={clsx(styles.title as string, 'text text_type_main-large')}>
         Детали ингредиента
@@ -37,5 +34,9 @@ export const IngredientModal = ({
         </div>
       </div>
     </>
+  ) : (
+    <h3 className={clsx(styles.title as string, 'text text_type_main-large')}>
+      Ингредиент не выбран
+    </h3>
   );
 };

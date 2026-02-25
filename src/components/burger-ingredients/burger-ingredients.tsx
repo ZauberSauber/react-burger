@@ -1,71 +1,97 @@
-import { Tab } from '@krgaa/react-developer-burger-ui-components';
+import { useGetIngredientsQuery } from '@/services/constructor/api';
+import { Preloader, Tab } from '@krgaa/react-developer-burger-ui-components';
 import clsx from 'clsx';
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 
 import { IngredientTypeBlock } from '../ingredient-type-block/ingredient-type-block';
-import { TAB_NAMES } from './constants';
-
-import type { TIngredient, TIngredientType } from '@utils/types';
+import { TABS } from './constants';
 
 import styles from './burger-ingredients.module.css';
 
-type TBurgerIngredientsProps = {
-  ingredients: TIngredient[];
-  addIngredient: (id: string) => void;
-};
+export const BurgerIngredients = (): React.JSX.Element => {
+  const { isLoading, data } = useGetIngredientsQuery('');
+  const [activeIndex, setActiveIndex] = useState<number>(0);
 
-export const BurgerIngredients = ({
-  ingredients,
-  addIngredient,
-}: TBurgerIngredientsProps): React.JSX.Element => {
-  console.log(ingredients);
-  const [activeTab, setActibeTab] = useState<TIngredientType>('bun');
+  const isActive = (index: number): boolean => index === activeIndex;
 
-  const isActive = (tabName: TIngredientType): boolean => tabName === activeTab;
+  const listContainerRef = useRef<HTMLDivElement>(null);
+  const sectionRefs = useRef<(HTMLDivElement | null)[]>([]);
+
+  const addToRefs = (el: HTMLDivElement | null, index: number): void => {
+    if (el && !sectionRefs.current.includes(el)) {
+      sectionRefs.current[index] = el;
+    }
+  };
+
+  const handleScroll = (): void => {
+    if (!listContainerRef.current) return;
+
+    const containerRect = listContainerRef.current.getBoundingClientRect();
+
+    sectionRefs.current.forEach((section, index) => {
+      if (!section) return;
+
+      const sectionRect = section.getBoundingClientRect();
+      const relativeTop = sectionRect.top - containerRect.top;
+
+      if (relativeTop >= -50 && relativeTop < 150) {
+        if (activeIndex !== index) {
+          setActiveIndex(index);
+        }
+      }
+    });
+  };
+
+  const handleSwitchClick = (index: number): void => {
+    setActiveIndex(index);
+    const targetRef = sectionRefs.current[index];
+
+    if (targetRef && listContainerRef.current) {
+      targetRef.scrollIntoView({
+        behavior: 'smooth',
+        block: 'start',
+      });
+    }
+  };
 
   return (
-    <section className={styles.burger_ingredients}>
+    <section className={clsx(styles.burger_ingredients, 'pb-10')}>
       <nav>
         <ul className={styles.menu}>
-          <Tab
-            value={TAB_NAMES.bun}
-            active={isActive(TAB_NAMES.bun)}
-            onClick={() => {
-              setActibeTab(TAB_NAMES.bun);
-            }}
-          >
-            Булки
-          </Tab>
-          <Tab
-            value={TAB_NAMES.main}
-            active={isActive(TAB_NAMES.main)}
-            onClick={() => {
-              setActibeTab(TAB_NAMES.main);
-            }}
-          >
-            Начинки
-          </Tab>
-          <Tab
-            value={TAB_NAMES.sauce}
-            active={isActive(TAB_NAMES.sauce)}
-            onClick={() => {
-              setActibeTab(TAB_NAMES.sauce);
-            }}
-          >
-            Соусы
-          </Tab>
+          {TABS.map((tab, index) => (
+            <Tab
+              key={tab.id}
+              value={tab.id}
+              active={isActive(index)}
+              onClick={() => handleSwitchClick(index)}
+            >
+              {tab.name}
+            </Tab>
+          ))}
         </ul>
       </nav>
-      <section className={clsx('custom-scroll', styles.ingredients_container)}>
-        {Object.keys(TAB_NAMES).map((tabName) => (
-          <IngredientTypeBlock
-            key={tabName}
-            type={tabName as TIngredientType}
-            ingredients={ingredients.filter((ingredient) => ingredient.type === tabName)}
-            onClick={addIngredient}
-          />
-        ))}
-      </section>
+      {isLoading ? (
+        <Preloader />
+      ) : (
+        <section
+          className={clsx('custom-scroll', styles.ingredients_container)}
+          ref={listContainerRef}
+          onScroll={handleScroll}
+        >
+          {TABS.map((tab, index) => {
+            return (
+              <IngredientTypeBlock
+                key={tab.id}
+                ref={(el: HTMLDivElement) => addToRefs(el, index)}
+                type={tab.id}
+                ingredients={(data?.data ?? []).filter(
+                  (ingredient) => ingredient.type === tab.id
+                )}
+              />
+            );
+          })}
+        </section>
+      )}
     </section>
   );
 };
