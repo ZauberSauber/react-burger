@@ -1,8 +1,8 @@
-import { useSelector } from 'react-redux';
+import { useAppSelector } from '@/utils/hooks';
 
+import { getRecept } from '../../services/slices/burger/burgerSlice';
 import { DragElement } from '../drag-element/drag-element';
 import { Ingredient } from '../ingredient/ingredient';
-import { getRecept } from '../slices/burger/burgerSlice';
 import { BLOCK_NAMES } from './constants';
 
 import type { TIngredient, TIngredientType } from '@/utils/types';
@@ -20,7 +20,7 @@ export const IngredientTypeBlock = ({
   ingredients,
   ref,
 }: TIngredientTypeBlockProps): React.JSX.Element => {
-  const recept = useSelector(getRecept);
+  const recept = useAppSelector(getRecept);
 
   return (
     <section className="pl-4 pr-4 mt-10" ref={ref}>

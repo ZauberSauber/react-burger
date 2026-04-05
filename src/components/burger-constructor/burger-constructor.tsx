@@ -1,4 +1,7 @@
+import { useLazyUserQuery } from '@/services/auth/api';
 import { useCreateOrderMutation } from '@/services/constructor/api';
+import { useAppDispatch, useAppSelector } from '@/utils/hooks';
+import { PATHS } from '@/utils/paths';
 import {
   closestCenter,
   DndContext,
@@ -20,12 +23,8 @@ import {
   DragIcon,
 } from '@krgaa/react-developer-burger-ui-components';
 import clsx from 'clsx';
-import { useDispatch, useSelector } from 'react-redux';
+import { useLocation, useNavigate } from 'react-router-dom';
 
-import { DragSortElement } from '../drag-sort-element/drag-sort-element';
-import { DropTarget } from '../drop-target/drop-target';
-import { EmptyConstructorElement } from '../empty-constructor-element/empty-constructor-element';
-import { ScrollWrapper } from '../scroll-wrapper/scroll-wrapper';
 import {
   addBun,
   addInner,
@@ -33,20 +32,28 @@ import {
   getRecept,
   removeIngredient,
   setInnerList,
-} from '../slices/burger/burgerSlice';
-import { setOrderModalState } from '../slices/modal/modalSlice';
+} from '../../services/slices/burger/burgerSlice';
+import { setOrderModalState } from '../../services/slices/modal/modalSlice';
+import { DragSortElement } from '../drag-sort-element/drag-sort-element';
+import { DropTarget } from '../drop-target/drop-target';
+import { EmptyConstructorElement } from '../empty-constructor-element/empty-constructor-element';
+import { ScrollWrapper } from '../scroll-wrapper/scroll-wrapper';
 
 import type { TIngredient } from '@utils/types';
 
 import styles from './burger-constructor.module.css';
 
 export const BurgerConstructor = (): React.JSX.Element => {
-  const dispatch = useDispatch();
+  const [getUserQuery, { isLoading: isUserLoading }] = useLazyUserQuery();
+  const dispatch = useAppDispatch();
   const [createOrderMutation, { isLoading: isCreatingOrder }] = useCreateOrderMutation({
     fixedCacheKey: 'from-constructor',
   });
 
-  const recept = useSelector(getRecept);
+  const location = useLocation();
+  const navigate = useNavigate();
+
+  const recept = useAppSelector(getRecept);
 
   const sensors = useSensors(
     useSensor(MouseSensor, {
@@ -69,6 +76,14 @@ export const BurgerConstructor = (): React.JSX.Element => {
   };
 
   const createOrder = async (): Promise<void> => {
+    const result = await getUserQuery({});
+
+    if (result.isError) {
+      void navigate(PATHS.LOGIN, { state: { from: location } });
+
+      return;
+    }
+
     let ids = recept.inner.map((item) => item._id);
 
     if (recept.bun) {
@@ -206,7 +221,9 @@ export const BurgerConstructor = (): React.JSX.Element => {
           size="medium"
           type="primary"
           htmlType="button"
-          disabled={!recept.bun || !recept.inner.length || isCreatingOrder}
+          disabled={
+            !recept.bun || !recept.inner.length || isCreatingOrder || isUserLoading
+          }
           onClick={() => void createOrder()}
         >
           Оформить заказ

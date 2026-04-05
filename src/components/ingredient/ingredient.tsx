@@ -1,9 +1,10 @@
+import { useAppDispatch } from '@/utils/hooks';
+import { PATHS } from '@/utils/paths';
 import { Counter, CurrencyIcon } from '@krgaa/react-developer-burger-ui-components';
 import clsx from 'clsx';
-import { useDispatch } from 'react-redux';
+import { useLocation, useNavigate } from 'react-router-dom';
 
-import { setLastIngredient } from '../slices/burger/burgerSlice';
-import { setIngredientModalState } from '../slices/modal/modalSlice';
+import { setLastIngredient } from '../../services/slices/burger/burgerSlice';
 
 import type { TIngredient } from '@/utils/types';
 
@@ -18,14 +19,18 @@ export const Ingredient = ({
   ingredient,
   count = 0,
 }: TIngredientProps): React.JSX.Element => {
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
+  const navigate = useNavigate();
+  const location = useLocation();
 
   return (
     <div
       className={clsx('pt-2 pb-2', styles.ingredient)}
       onClick={() => {
+        void navigate(`${PATHS.INGREDIENTS}/:${ingredient._id}`, {
+          state: { bg: location },
+        });
         dispatch(setLastIngredient(ingredient));
-        dispatch(setIngredientModalState(true));
       }}
     >
       {count > 0 && <Counter count={count} size="default" />}
