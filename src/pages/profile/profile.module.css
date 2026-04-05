@@ -1,0 +1,48 @@
+.content {
+  display: flex;
+  margin-left: calc(50vw - 620px);
+}
+
+.navSection {
+  width: 320px;
+}
+
+.nav {
+  display: flex;
+  flex-direction: column;
+}
+
+.navItem {
+  display: flex;
+  align-items: center;
+  height: 64px;
+  cursor: pointer;
+}
+
+.info {
+  display: block;
+  margin-top: 80px;
+}
+
+.buttons {
+  display: flex;
+  justify-content: end;
+}
+
+.exit {
+  color: var(--text-inactive-color);
+}
+
+.exit:hover {
+  color: var(--text-primary-color);
+}
+
+.link {
+  color: var(--text-inactive-color);
+  text-decoration: none;
+}
+
+.link_active,
+.link:hover {
+  color: var(--text-primary-color);
+}

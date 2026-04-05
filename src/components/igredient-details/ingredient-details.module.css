@@ -13,3 +13,7 @@
   align-items: center;
   gap: 10px;
 }
+
+.img {
+  max-width: 480px;
+}

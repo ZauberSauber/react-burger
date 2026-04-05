@@ -1,19 +1,31 @@
 import clsx from 'clsx';
-import { useSelector } from 'react-redux';
 
-import { getLastIngredient } from '../slices/burger/burgerSlice';
+import type { TIngredient } from '@/utils/types';
 
 import styles from './ingredient-details.module.css';
 
-export const IngredientDetails = (): React.JSX.Element => {
-  const ingredient = useSelector(getLastIngredient);
-
+export const IngredientDetails = ({
+  ingredient,
+  titleStyle = 'page',
+}: {
+  ingredient: TIngredient | null;
+  titleStyle?: 'page' | 'modal';
+}): React.JSX.Element => {
   return ingredient ? (
     <>
-      <h3 className={clsx(styles.title as string, 'text text_type_main-large')}>
+      <h3
+        className={clsx(
+          titleStyle === 'modal' ? (styles.title as string) : '',
+          'text text_type_main-large'
+        )}
+      >
         Детали ингредиента
       </h3>
-      <img src={ingredient.image_large} alt={ingredient.name} />
+      <img
+        className={styles.img as string}
+        src={ingredient.image_large}
+        alt={ingredient.name}
+      />
       <span className="text text_type_main-medium mt-4">{ingredient.name}</span>
       <div className={clsx(styles.info as string, 'mt-8')}>
         <div className={styles.info_item as string}>
