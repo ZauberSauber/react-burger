@@ -1,5 +1,69 @@
+.page {
+  display: grid;
+  grid-template: 'left-title title right-title' auto 'left content right' auto / 1fr 1fr 1fr;
+}
+
+.title {
+  grid-area: title;
+  padding: 0;
+}
+
 .content {
   display: flex;
+  grid-area: content;
+  justify-content: center;
+  gap: 60px;
+}
+
+.order_list {
+  display: flex;
   flex-direction: column;
-  align-items: center;
+  gap: 16px;
+  min-width: 650px;
+  max-height: 80vh;
+  padding-right: 8px;
+  overflow-y: scroll;
+}
+
+.tablo {
+  display: flex;
+  flex-direction: column;
+  gap: 60px;
+}
+
+.orders_state {
+  display: flex;
+  justify-content: space-between;
+  gap: 36px;
+}
+
+.orders_state_wrapper {
+  display: flex;
+  flex-direction: column;
+  width: 272px;
+}
+
+.state_title {
+  margin-bottom: 24px;
+}
+
+.orders_state_list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-height: 200px;
+  overflow-y: scroll;
+}
+
+.orders_state_ready {
+  color: #0cc;
+}
+
+.total {
+  display: flex;
+  flex-direction: column;
+}
+
+.total_count {
+  text-shadow: 0 0 16px #33f;
 }

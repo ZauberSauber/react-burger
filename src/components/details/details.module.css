@@ -1,0 +1,40 @@
+.content {
+  grid-area: content;
+  width: 640px;
+}
+
+.column {
+  display: flex;
+  flex-direction: column;
+}
+
+.order_id {
+  margin-bottom: 40px;
+  text-align: center;
+}
+
+.order_name {
+  margin-bottom: 12px;
+}
+
+.order_status {
+  margin-bottom: 60px;
+  color: #0cc;
+}
+
+.compound {
+  margin-bottom: 24px;
+}
+
+.order_list {
+  gap: 16px;
+  max-height: 312px;
+  margin-bottom: 40px;
+  padding-right: 24px;
+}
+
+.info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}

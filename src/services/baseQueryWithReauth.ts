@@ -17,6 +17,10 @@ export const baseQueryWithReauth = (
 
     const refreshToken = localStorage.getItem('refreshToken') ?? '';
 
+    if (!refreshToken) {
+      return result;
+    }
+
     if (result.error && result.error.status === 401) {
       if (!mutex.isLocked()) {
         const release = await mutex.acquire();

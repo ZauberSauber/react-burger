@@ -12,7 +12,11 @@ const onlyUnAuthPaths = [
 const onlyAuthPaths = [PATHS.PROFILE];
 
 export const ProtectedRoute = (): React.JSX.Element => {
-  const { isLoading: isUserLoading, isError, isSuccess } = useUserQuery('');
+  const {
+    isLoading: isUserLoading,
+    isError,
+    isSuccess,
+  } = useUserQuery('', { refetchOnMountOrArgChange: true });
   const location = useLocation();
 
   if (isUserLoading) {

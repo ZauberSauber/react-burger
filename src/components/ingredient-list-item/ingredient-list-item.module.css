@@ -1,0 +1,9 @@
+.content {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.content :last-child {
+  margin-left: auto;
+}

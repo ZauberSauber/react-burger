@@ -1,0 +1,4 @@
+.page {
+  display: grid;
+  grid-template: 'left content right' auto / 1fr 1fr 1fr;
+}

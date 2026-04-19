@@ -15,3 +15,5 @@ export type TIngredient = {
   __v: number;
   id: string;
 };
+
+export type TOrderStatus = 'done' | 'pending' | 'created';

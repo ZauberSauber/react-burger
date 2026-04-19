@@ -1,0 +1,10 @@
+.price {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.price_icon {
+  width: 22px;
+  height: 22px;
+}

@@ -29,9 +29,9 @@ export const LoginPage = (): React.JSX.Element => {
   const handleSubmit = (): void => {
     void login(formData)
       .then((result) => {
-        if (result.data?.success && locationState?.from) {
+        if (result.data?.success) {
           if (locationState?.from) {
-            void navigate(locationState.from.pathname);
+            window.location.reload();
           } else {
             void navigate(PATHS.HOME);
           }
