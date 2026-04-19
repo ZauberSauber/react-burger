@@ -1,5 +1,7 @@
 import { Form } from '@/components/form/form';
 import { useLazyLoginQuery } from '@/services/auth/api';
+import { setCacheKey } from '@/services/slices/user/userSlice';
+import { useAppDispatch } from '@/utils/hooks';
 import { PATHS } from '@/utils/paths';
 import {
   Button,
@@ -24,6 +26,8 @@ export const LoginPage = (): React.JSX.Element => {
     password: '',
   });
 
+  const dispatch = useAppDispatch();
+
   const [login, { isLoading }] = useLazyLoginQuery();
 
   const handleSubmit = (): void => {
@@ -31,7 +35,8 @@ export const LoginPage = (): React.JSX.Element => {
       .then((result) => {
         if (result.data?.success) {
           if (locationState?.from) {
-            window.location.reload();
+            dispatch(setCacheKey(`${new Date().getTime()}`));
+            void navigate(locationState.from.pathname);
           } else {
             void navigate(PATHS.HOME);
           }

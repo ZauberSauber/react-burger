@@ -6,9 +6,10 @@ type TUser = {
   email: string;
 };
 
-const initialState: { user: TUser | null; isAuthChecked: boolean } = {
+const initialState: { user: TUser | null; isAuthChecked: boolean; cacheKey: string } = {
   user: null,
   isAuthChecked: false,
+  cacheKey: `${new Date().getTime()}`,
 };
 
 export const userSlice = createSlice({
@@ -20,6 +21,9 @@ export const userSlice = createSlice({
     },
     setIsAuthChecked: (state, action: PayloadAction<boolean>) => {
       state.isAuthChecked = action.payload;
+    },
+    setCacheKey: (state, action: PayloadAction<string>) => {
+      state.cacheKey = action.payload;
     },
   },
   extraReducers: (builder) => {
@@ -53,11 +57,12 @@ export const userSlice = createSlice({
   selectors: {
     getUser: (state) => state.user,
     getIsAuthChecked: (state) => state.isAuthChecked,
+    getCacheKey: (state) => state.cacheKey,
   },
 });
 
-export const { setUserState, setIsAuthChecked } = userSlice.actions;
+export const { setUserState, setIsAuthChecked, setCacheKey } = userSlice.actions;
 
-export const { getUser, getIsAuthChecked } = userSlice.selectors;
+export const { getUser, getIsAuthChecked, getCacheKey } = userSlice.selectors;
 
 export default userSlice.reducer;

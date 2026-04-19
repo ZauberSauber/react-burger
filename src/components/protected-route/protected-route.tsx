@@ -1,4 +1,6 @@
 import { useUserQuery } from '@/services/auth/api';
+import { getCacheKey } from '@/services/slices/user/userSlice';
+import { useAppSelector } from '@/utils/hooks';
 import { PATHS } from '@/utils/paths';
 import { Preloader } from '@krgaa/react-developer-burger-ui-components';
 import { Navigate, Outlet, useLocation } from 'react-router-dom';
@@ -12,11 +14,12 @@ const onlyUnAuthPaths = [
 const onlyAuthPaths = [PATHS.PROFILE];
 
 export const ProtectedRoute = (): React.JSX.Element => {
+  const cacheKey = useAppSelector(getCacheKey);
   const {
     isLoading: isUserLoading,
     isError,
     isSuccess,
-  } = useUserQuery('', { refetchOnMountOrArgChange: true });
+  } = useUserQuery(cacheKey, { refetchOnMountOrArgChange: true });
   const location = useLocation();
 
   if (isUserLoading) {
