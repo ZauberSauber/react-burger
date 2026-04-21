@@ -18,6 +18,7 @@ import {
   Outlet,
   useLocation,
   useNavigate,
+  useParams,
   type NavLinkRenderProps,
 } from 'react-router-dom';
 
@@ -43,6 +44,7 @@ export const ProfilePage = (): React.JSX.Element => {
 
   const location = useLocation();
   const navigate = useNavigate();
+  const { id } = useParams();
 
   const [isDataChanged, setIsDataChanged] = useState(false);
   const [initialValues, setInitialValues] = useState<TFormData>(INIT_DATA);
@@ -50,6 +52,19 @@ export const ProfilePage = (): React.JSX.Element => {
 
   const isLinkActive = ({ isActive }: NavLinkRenderProps): string =>
     isActive ? `${style.link} ${style.link_active}` : (style.link as string);
+
+  const getInfoText = (): string => {
+    switch (location.pathname) {
+      case PATHS.PROFILE:
+        return 'В этом разделе вы можете изменить свои персональные данные';
+
+      case `${PATHS.PROFILE}/${PATHS.PROFILE_ORDER}`:
+        return 'В этом разделе вы можете посмотреть историю своих заказов';
+
+      default:
+        return '';
+    }
+  };
 
   useEffect(() => {
     if (userData) {
@@ -94,117 +109,122 @@ export const ProfilePage = (): React.JSX.Element => {
   }
 
   return (
-    <div className={clsx(style.content, 'mt-30')}>
-      <section className={clsx(style.navSection as string, 'pr-15')}>
-        <nav className={style.nav as string}>
-          <NavLink
-            className={(props) => {
-              console.log(props);
-              return clsx(
-                isLinkActive(props),
-                style.navItem as string,
-                'text text_type_main-medium'
-              );
-            }}
-            to={PATHS.PROFILE}
-            end
-          >
-            Профиль
-          </NavLink>
-          <NavLink
-            className={(props) =>
-              clsx(
-                isLinkActive(props),
-                style.navItem as string,
-                'text text_type_main-medium'
-              )
-            }
-            to={PATHS.PROFILE_ORDER}
-            end
-          >
-            История заказов
-          </NavLink>
-          <span
-            className={clsx(
-              style.navItem as string,
-              style.exit as string,
-              'text text_type_main-medium'
-            )}
-            onClick={() => {
-              const token = localStorage.getItem('refreshToken') ?? '';
+    <>
+      <div className={clsx(style.content)}>
+        {!id || (location.state as { bg: string })?.bg ? (
+          <section className={clsx(style.navSection as string, 'pr-15 mt-30')}>
+            <nav className={style.nav as string}>
+              <NavLink
+                className={(props) => {
+                  return clsx(
+                    isLinkActive(props),
+                    style.navItem as string,
+                    'text text_type_main-medium'
+                  );
+                }}
+                to={PATHS.PROFILE}
+                end
+              >
+                Профиль
+              </NavLink>
+              <NavLink
+                className={(props) =>
+                  clsx(
+                    isLinkActive(props),
+                    style.navItem as string,
+                    'text text_type_main-medium'
+                  )
+                }
+                to={PATHS.PROFILE_ORDER}
+                end
+              >
+                История заказов
+              </NavLink>
+              <span
+                className={clsx(
+                  style.navItem as string,
+                  style.exit as string,
+                  'text text_type_main-medium'
+                )}
+                onClick={() => {
+                  const token = localStorage.getItem('refreshToken') ?? '';
 
-              if (!token) {
-                return;
-              }
+                  if (!token) {
+                    void navigate(PATHS.HOME);
+                    return;
+                  }
 
-              void logOutQuery({
-                token,
-              })
-                .then(() => {
-                  void navigate(PATHS.HOME);
-                })
-                .catch((error) => {
-                  console.log(error);
-                });
-            }}
-          >
-            Выход
-          </span>
-        </nav>
-        <span
-          className={clsx(
-            style.info as string,
-            'text text_type_main-default text_color_inactive'
-          )}
-        >
-          В этом разделе вы можете изменить свои персональные данные
-        </span>
-      </section>
-      <section>
+                  void logOutQuery({
+                    token,
+                  })
+                    .finally(() => {
+                      void navigate(PATHS.HOME);
+                    })
+                    .catch((error) => {
+                      console.log(error);
+                    });
+                }}
+              >
+                Выход
+              </span>
+            </nav>
+            <span
+              className={clsx(
+                style.info as string,
+                'text text_type_main-default text_color_inactive'
+              )}
+            >
+              {getInfoText()}
+            </span>
+          </section>
+        ) : null}
+
         {location.pathname === PATHS.PROFILE ? (
-          <Form onSubmit={handleSubmit}>
-            <Input
-              icon="EditIcon"
-              value={formData.name}
-              placeholder="Имя"
-              onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-            />
-            <Input
-              extraClass="mt-6"
-              icon="EditIcon"
-              value={formData.email}
-              placeholder="Логин"
-              onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-            />
-            <PasswordInput
-              extraClass="mt-6"
-              icon="EditIcon"
-              name="password"
-              value={formData.password}
-              placeholder="Пароль"
-              disabled={false}
-              onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-            />
-            {isDataChanged ? (
-              <div className={clsx(style.buttons as string, 'mt-6')}>
-                <Button
-                  onClick={handleCancel}
-                  size="medium"
-                  type="secondary"
-                  htmlType="button"
-                >
-                  Отмена
-                </Button>
-                <Button size="medium" type="primary" htmlType="submit">
-                  Сохранить
-                </Button>
-              </div>
-            ) : null}
-          </Form>
-        ) : (
-          <Outlet />
-        )}
-      </section>
-    </div>
+          <section className="mt-10">
+            <Form onSubmit={handleSubmit}>
+              <Input
+                icon="EditIcon"
+                value={formData.name}
+                placeholder="Имя"
+                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+              />
+              <Input
+                extraClass="mt-6"
+                icon="EditIcon"
+                value={formData.email}
+                placeholder="Логин"
+                onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+              />
+              <PasswordInput
+                extraClass="mt-6"
+                icon="EditIcon"
+                name="password"
+                value={formData.password}
+                placeholder="Пароль"
+                disabled={false}
+                onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+              />
+              {isDataChanged ? (
+                <div className={clsx(style.buttons as string, 'mt-6')}>
+                  <Button
+                    onClick={handleCancel}
+                    size="medium"
+                    type="secondary"
+                    htmlType="button"
+                  >
+                    Отмена
+                  </Button>
+                  <Button size="medium" type="primary" htmlType="submit">
+                    Сохранить
+                  </Button>
+                </div>
+              ) : null}
+            </Form>
+          </section>
+        ) : null}
+
+        <Outlet />
+      </div>
+    </>
   );
 };

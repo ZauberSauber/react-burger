@@ -1,5 +1,6 @@
 import { useLazyUserQuery } from '@/services/auth/api';
 import { useCreateOrderMutation } from '@/services/constructor/api';
+import { setCacheKey } from '@/services/slices/user/userSlice';
 import { useAppDispatch, useAppSelector } from '@/utils/hooks';
 import { PATHS } from '@/utils/paths';
 import {
@@ -76,7 +77,9 @@ export const BurgerConstructor = (): React.JSX.Element => {
   };
 
   const createOrder = async (): Promise<void> => {
-    const result = await getUserQuery({});
+    const cacheKey = `${new Date().getTime()}`;
+    dispatch(setCacheKey(cacheKey));
+    const result = await getUserQuery(cacheKey);
 
     if (result.isError) {
       void navigate(PATHS.LOGIN, { state: { from: location } });

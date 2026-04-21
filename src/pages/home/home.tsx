@@ -1,7 +1,7 @@
 import { BurgerConstructor } from '@/components/burger-constructor/burger-constructor';
 import { BurgerIngredients } from '@/components/burger-ingredients/burger-ingredients';
+import { dndManager } from '@/utils/dnd';
 import { DndProvider } from 'react-dnd';
-import { HTML5Backend } from 'react-dnd-html5-backend';
 import { Outlet, useLocation } from 'react-router-dom';
 
 import styles from './home.module.css';
@@ -17,7 +17,7 @@ export const Home = (): React.JSX.Element => {
             Соберите бургер
           </h1>
           <main className={`${styles.main} pl-5 pr-5`}>
-            <DndProvider backend={HTML5Backend}>
+            <DndProvider manager={dndManager}>
               <BurgerIngredients />
               <BurgerConstructor />
             </DndProvider>

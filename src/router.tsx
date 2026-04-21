@@ -2,6 +2,7 @@ import { createBrowserRouter } from 'react-router-dom';
 
 import { Layout } from './components/layour/layout';
 import { ProtectedRoute } from './components/protected-route/protected-route';
+import { FeedDetailsPage } from './pages/feed-details/feed-details';
 import { FeedPage } from './pages/feed/feed';
 import { ForgotPasswordPage } from './pages/forgot-password/forgot-password';
 import { Home } from './pages/home/home';
@@ -31,6 +32,12 @@ export const router = createBrowserRouter([
       {
         path: PATHS.FEED,
         element: <FeedPage />,
+        children: [
+          {
+            path: `:id`,
+            element: <FeedDetailsPage />,
+          },
+        ],
       },
       {
         element: <ProtectedRoute />,
@@ -41,6 +48,10 @@ export const router = createBrowserRouter([
             children: [
               {
                 path: PATHS.PROFILE_ORDER,
+                element: <ProfileOrderPage />,
+              },
+              {
+                path: `${PATHS.PROFILE_ORDER}/:id`,
                 element: <ProfileOrderPage />,
               },
             ],

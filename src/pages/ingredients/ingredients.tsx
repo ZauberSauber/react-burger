@@ -22,7 +22,7 @@ const IngredientWrapper = ({
 
 export const IngredientsPage = (): React.JSX.Element => {
   const { id } = useParams();
-  const { isLoading, data } = useGetIngredientsQuery('');
+  const { isLoading, data } = useGetIngredientsQuery('ingredients');
 
   const location = useLocation();
   const locationState = location.state as { bg: string };

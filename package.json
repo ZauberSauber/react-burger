@@ -32,6 +32,7 @@
     "async-mutex": "^0.5.0",
     "clsx": "^2.1.1",
     "core-js": "^3.45.1",
+    "dnd-core": "^16.0.1",
     "lodash-es": "^4.17.21",
     "react": "^19.1.1",
     "react-dnd": "^16.0.1",

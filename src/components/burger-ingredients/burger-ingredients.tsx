@@ -9,7 +9,7 @@ import { TABS } from './constants';
 import styles from './burger-ingredients.module.css';
 
 export const BurgerIngredients = (): React.JSX.Element => {
-  const { isLoading, data } = useGetIngredientsQuery('');
+  const { isLoading, data } = useGetIngredientsQuery('ingredients');
   const [activeIndex, setActiveIndex] = useState<number>(0);
 
   const isActive = (index: number): boolean => index === activeIndex;

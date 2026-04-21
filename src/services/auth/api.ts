@@ -39,6 +39,7 @@ type TLoginResponse = TUserResponse & {
 type TLoginBody = { email: string; password: string };
 
 type TTokenResponse = TBaseResponse & {
+  accessToken: string;
   refreshToken: string;
 };
 
@@ -88,6 +89,7 @@ export const reauthApi = createApi({
       query: () => ({
         url: '/auth/user',
         method: 'GET',
+        cache: 'no-cache',
       }),
     }),
     changeUser: builder.query<TUserRefrreshResponse, TUserRefrreshBody>({
