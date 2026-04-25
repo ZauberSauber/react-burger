@@ -40,7 +40,9 @@ export const Ingredient = ({
         <span className="text text_type_digits-default">{ingredient.price}</span>
         <CurrencyIcon type="primary" />
       </span>
-      <span>{ingredient.name}</span>
+      <span className={`test-ingredient-name-${ingredient.type}`}>
+        {ingredient.name}
+      </span>
     </div>
   );
 };

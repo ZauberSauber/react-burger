@@ -122,7 +122,8 @@ export const BurgerConstructor = (): React.JSX.Element => {
       <DropTarget
         className={clsx(
           styles.ingredient_wrapper as string,
-          styles.ingredient__bun as string
+          styles.ingredient__bun as string,
+          'drop-zone-bun-top'
         )}
         accept={'bun'}
         onDrop={handleDropIngredient}
@@ -143,7 +144,7 @@ export const BurgerConstructor = (): React.JSX.Element => {
 
       <ScrollWrapper className={styles.burger_scroll as string}>
         <DropTarget
-          className={styles.drop_ingedient as string}
+          className={clsx(styles.drop_ingedient as string, 'drop-zone-ingredient')}
           accept={['main', 'sauce']}
           onDrop={handleDropIngredient}
         >
@@ -194,7 +195,8 @@ export const BurgerConstructor = (): React.JSX.Element => {
       <DropTarget
         className={clsx(
           styles.ingredient_wrapper as string,
-          styles.ingredient__bun as string
+          styles.ingredient__bun as string,
+          'drop-zone-bun-bottom'
         )}
         accept={'bun'}
         onDrop={handleDropIngredient}
