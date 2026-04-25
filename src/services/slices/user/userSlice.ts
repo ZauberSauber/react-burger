@@ -1,7 +1,7 @@
 import { authApi } from '@/services/auth/api';
 import { createSlice, type PayloadAction } from '@reduxjs/toolkit';
 
-type TUser = {
+export type TUser = {
   name: string;
   email: string;
 };

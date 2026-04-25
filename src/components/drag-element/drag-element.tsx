@@ -24,6 +24,7 @@ export const DragElement = ({
 
   return !collected.isDragging ? (
     <div
+      className={`test-drag-item-${type}`}
       style={{ opacity: collected.isDragging ? 0.4 : 1 }}
       ref={drag as unknown as React.RefObject<HTMLDivElement>}
     >

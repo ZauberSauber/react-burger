@@ -36,3 +36,6 @@
 		'@utils': path.resolve(__dirname, './src/utils'),
 	},
 ```
+
+### Сайт приложения
+http://мк-звёздный-бургер.рф/
